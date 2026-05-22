@@ -30,7 +30,6 @@ const loginUserIntoDB = async (payload: Pick<IUser, "email" | "password">) => {
   const jwtPayload = {
     id: user.id,
     name: user.name,
-    email: user.email,
     role: user.role,
   };
 

@@ -1,0 +1,25 @@
+import type { Request, Response } from "express";
+import sendResponse from "../../utils/sendResponse";
+import { issueService } from "./issue.service";
+
+const createIssue = async (req: Request, res: Response) => {
+  try {
+    const {id} = req.user
+    const result = await issueService.createIssueIntoDB(req.body, id);
+    sendResponse(res, {
+      statusCode: 201,
+      message: "Issue Created Succesfully",
+      success: true,
+      data: result ?? {},
+    });
+  } catch (err: any) {
+    sendResponse(res, {
+      statusCode: 500,
+      message: "Internal Server Error",
+      success: false,
+      error: err ?? {},
+    });
+  }
+};
+
+export const issueController = { createIssue };
