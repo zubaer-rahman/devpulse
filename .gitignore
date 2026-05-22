@@ -1,0 +1,21 @@
+# Dependency directories
+node_modules/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm
+ 
+# dotenv environment variable files
+.env
+.env.*
+!.env.example
+
+# vercel
+.vercel
+
+# production
+/build
+
+ 
