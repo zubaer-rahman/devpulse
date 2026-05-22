@@ -11,10 +11,14 @@ export const initDB = async () => {
   try {
     await pool.query(`CREATE TABLE IF NOT EXISTS users(
         id SERIAL PRIMARY KEY,
-        name VARCHAR(20) NOT NULL,
-        email VARCHAR(20) UNIQUE NOT NULL,
+        name VARCHAR(25) NOT NULL,
+        email VARCHAR(30) UNIQUE NOT NULL
+        CHECK (
+        email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'
+        ),
         password TEXT NOT NULL,
-        role VARCHAR(10) DEFAULT 'contributor',
+        role VARCHAR(15) DEFAULT 'contributor'
+        CHECK (role IN ('contributor', 'maintainer')),
 
         created_at TIMESTAMP DEFAULT NOW(),
         updated_at TIMESTAMP DEFAULT NOW()
