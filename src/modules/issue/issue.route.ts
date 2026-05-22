@@ -10,4 +10,6 @@ router.post(
   issueController.createIssue,
 );
 
+router.get("/", issueController.getAllIssues);
+
 export const issueRoute = router;

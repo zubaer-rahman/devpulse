@@ -10,4 +10,70 @@ const createIssueIntoDB = async (payload: IIssue, reporter_id: number) => {
   return result.rows[0];
 };
 
-export const issueService = { createIssueIntoDB };
+const getAllIssuesFromDB = async (query: { sort?: string; type?: string; status?: string }) => {
+  const { sort, type, status } = query;
+
+  let queryText = `SELECT * FROM issues`;
+  const queryParams: any[] = [];
+  const filters: string[] = [];
+
+  if (type) {
+    queryParams.push(type);
+    filters.push(`type = $${queryParams.length}`);
+  }
+
+  if (status) {
+    queryParams.push(status);
+    filters.push(`status = $${queryParams.length}`);
+  }
+
+  if (filters.length > 0) {
+    queryText += ` WHERE ` + filters.join(" AND ");
+  }
+
+  if (sort === "oldest") {
+    queryText += ` ORDER BY created_at ASC`;
+  } else {
+    queryText += ` ORDER BY created_at DESC`;
+  }
+
+  const result = await pool.query(queryText, queryParams);
+  const issues = result.rows;
+
+  if (issues.length === 0) {
+    return [];
+  }
+
+  const reporterIds = Array.from(
+    new Set(issues.map((issue) => issue.reporter_id).filter(Boolean)),
+  );
+
+  if (reporterIds.length > 0) {
+    const placeholders = reporterIds.map((_, index) => `$${index + 1}`).join(", ");
+    const usersResult = await pool.query(
+      `SELECT id, name, role FROM users WHERE id IN (${placeholders})`,
+      reporterIds,
+    );
+
+    const reportersMap = new Map(usersResult.rows.map((user) => [user.id, user]));
+
+    return issues.map((issue) => {
+      const reporter = reportersMap.get(issue.reporter_id) || null;
+      const { reporter_id, ...issueData } = issue;
+      return {
+        ...issueData,
+        reporter,
+      };
+    });
+  }
+
+  return issues.map((issue) => {
+    const { reporter_id, ...issueData } = issue;
+    return {
+      ...issueData,
+      reporter: null,
+    };
+  });
+};
+
+export const issueService = { createIssueIntoDB, getAllIssuesFromDB };

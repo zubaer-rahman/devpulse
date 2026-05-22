@@ -22,4 +22,23 @@ const createIssue = async (req: Request, res: Response) => {
   }
 };
 
-export const issueController = { createIssue };
+const getAllIssues = async (req: Request, res: Response) => {
+  try {
+    const result = await issueService.getAllIssuesFromDB(req.query);
+    sendResponse(res, {
+      statusCode: 200,
+      message: "Issues retrived successfully",
+      success: true,
+      data: result,
+    });
+  } catch (err: any) {
+    sendResponse(res, {
+      statusCode: 500,
+      message: err.message ?? "Internal Server Error",
+      success: false,
+      error: err ?? {},
+    });
+  }
+};
+
+export const issueController = { createIssue, getAllIssues };
