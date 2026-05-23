@@ -69,4 +69,47 @@ const getSingleIssue = async (req: Request, res: Response) => {
   }
 };
 
-export const issueController = { createIssue, getAllIssues, getSingleIssue };
+const updateIssue = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const user = req.user;
+    const result = await issueService.updateIssueInDB(Number(id), req.body, {
+      id: user.id,
+      role: user.role,
+    });
+
+    if (result.status === 404) {
+      sendResponse(res, {
+        statusCode: 404,
+        message: result.message || "Issue not found",
+        success: false,
+      });
+      return;
+    }
+
+    if (result.status === 403) {
+      sendResponse(res, {
+        statusCode: 403,
+        message: result.message || "Forbidden Access",
+        success: false,
+      });
+      return;
+    }
+
+    sendResponse(res, {
+      statusCode: 200,
+      message: "Issue updated successfully",
+      success: true,
+      data: result.data,
+    });
+  } catch (err: any) {
+    sendResponse(res, {
+      statusCode: 500,
+      message: err.message ?? "Internal Server Error",
+      success: false,
+      error: err ?? {},
+    });
+  }
+};
+
+export const issueController = { createIssue, getAllIssues, getSingleIssue, updateIssue };

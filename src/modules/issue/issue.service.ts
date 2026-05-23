@@ -103,4 +103,46 @@ const getSingleIssueFromDB = async (id: number) => {
   };
 };
 
-export const issueService = { createIssueIntoDB, getAllIssuesFromDB, getSingleIssueFromDB };
+const updateIssueInDB = async (
+  id: number,
+  payload: Partial<IIssue>,
+  user: { id: number; role: string },
+) => {
+  const existingResult = await pool.query(`SELECT * FROM issues WHERE id=$1`, [id]);
+  const issue = existingResult.rows[0];
+
+  if (!issue) {
+    return { status: 404, message: "Issue not found" };
+  }
+
+  if (user.role === "contributor") {
+    if (issue.reporter_id !== user.id) {
+      return { status: 403, message: "Forbidden Access" };
+    }
+    if (issue.status !== "open") {
+      return { status: 403, message: "Forbidden Access" };
+    }
+  }
+
+  const { title, description, type } = payload;
+  const updatedTitle = title !== undefined ? title : issue.title;
+  const updatedDescription = description !== undefined ? description : issue.description;
+  const updatedType = type !== undefined ? type : issue.type;
+
+  const result = await pool.query(
+    `UPDATE issues 
+     SET title=$1, description=$2, type=$3, updated_at=NOW() 
+     WHERE id=$4 
+     RETURNING *`,
+    [updatedTitle, updatedDescription, updatedType, id],
+  );
+
+  return { status: 200, data: result.rows[0] };
+};
+
+export const issueService = {
+  createIssueIntoDB,
+  getAllIssuesFromDB,
+  getSingleIssueFromDB,
+  updateIssueInDB,
+};
