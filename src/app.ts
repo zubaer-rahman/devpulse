@@ -10,7 +10,7 @@ import globalErrorHandler from "./middleware/globalErrorHandler";
 export const app: Application = express();
 
 app.use(express.json());
-app.use(cors({ origin: `http://localhost:${config.port}/` }));
+app.use(cors());
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Hello World!");
