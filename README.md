@@ -3,7 +3,7 @@
 An internal tech issue & feature tracker platform designed for software teams to collaboratively report bugs, suggest features, and coordinate resolutions.
 
 ## 🚀 Live URL
-**[https://devpulse-rose.vercel.app/]**
+**https://devpulse-rose.vercel.app/**
 
 ## ✨ Features
 - **Role-Based Access Control**: Secure login and management for Contributors and Maintainers.
@@ -25,7 +25,7 @@ An internal tech issue & feature tracker platform designed for software teams to
 
 1. **Clone the repository:**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/zubaer-rahman/devpulse.git
    cd devpulse
    ```
 
