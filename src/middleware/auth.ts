@@ -15,6 +15,7 @@ const auth = (...roles: ROLES[]) => {
           message: "Unauthorized",
           success: false,
         });
+        return;
       }
       const decoded = jwt.verify(
         token as string,
@@ -31,6 +32,7 @@ const auth = (...roles: ROLES[]) => {
           message: "User Not Found",
           success: false,
         });
+        return;
       }
       const user = userData.rows[0];
       req.user = user;
@@ -41,6 +43,7 @@ const auth = (...roles: ROLES[]) => {
           message: "Forbidden Access",
           success: false,
         });
+        return;
       }
       req.role = user.role;
 
