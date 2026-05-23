@@ -3,7 +3,7 @@
 An internal tech issue & feature tracker platform designed for software teams to collaboratively report bugs, suggest features, and coordinate resolutions.
 
 ## 🚀 Live URL
-**[Insert Your Vercel Live URL Here]**
+**[https://devpulse-rose.vercel.app/]**
 
 ## ✨ Features
 - **Role-Based Access Control**: Secure login and management for Contributors and Maintainers.
