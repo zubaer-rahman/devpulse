@@ -76,4 +76,31 @@ const getAllIssuesFromDB = async (query: { sort?: string; type?: string; status?
   });
 };
 
-export const issueService = { createIssueIntoDB, getAllIssuesFromDB };
+const getSingleIssueFromDB = async (id: number) => {
+  const result = await pool.query(`SELECT * FROM issues WHERE id=$1`, [id]);
+  const issue = result.rows[0];
+
+  if (!issue) {
+    return null;
+  }
+
+  if (issue.reporter_id) {
+    const userResult = await pool.query(`SELECT id, name, role FROM users WHERE id=$1`, [
+      issue.reporter_id,
+    ]);
+    const reporter = userResult.rows[0] || null;
+    const { reporter_id, ...issueData } = issue;
+    return {
+      ...issueData,
+      reporter,
+    };
+  }
+
+  const { reporter_id, ...issueData } = issue;
+  return {
+    ...issueData,
+    reporter: null,
+  };
+};
+
+export const issueService = { createIssueIntoDB, getAllIssuesFromDB, getSingleIssueFromDB };
